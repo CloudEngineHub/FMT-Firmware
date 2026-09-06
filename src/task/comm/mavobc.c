@@ -657,7 +657,9 @@ static fmt_err_t handle_mavlink_message(mavlink_message_t* msg, mavlink_system_t
 
             auto_cmd.timestamp = systime_now_ms();
 
-            if (pos_target_local_ned.coordinate_frame == MAV_FRAME_LOCAL_NED) {
+            if (pos_target_local_ned.coordinate_frame == MAV_FRAME_GLOBAL) {
+                auto_cmd.frame = FRAME_GLOBAL_NED;
+            } else if (pos_target_local_ned.coordinate_frame == MAV_FRAME_LOCAL_NED) {
                 auto_cmd.frame = FRAME_LOCAL_NED;
             } else if (pos_target_local_ned.coordinate_frame == MAV_FRAME_LOCAL_FRD) {
                 auto_cmd.frame = FRAME_LOCAL_FRD;
@@ -770,8 +772,6 @@ static fmt_err_t handle_mavlink_message(mavlink_message_t* msg, mavlink_system_t
                 LOG_W("unsupported SET_POSITION_TARGET_GLOBAL_INT frame:%d", pos_target_global_int.coordinate_frame);
                 break;
             }
-
-            auto_cmd.frame = FRAME_GLOBAL_NED;
 
             if (!(pos_target_global_int.type_mask & POSITION_TARGET_TYPEMASK_X_IGNORE)) {
                 auto_cmd.lat_cmd = pos_target_global_int.lat_int;
